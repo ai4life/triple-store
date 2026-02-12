@@ -18,3 +18,10 @@
   - Verified via `docker compose up -d` that the service comes up and responds to `/$/ping`.
 
 -- Change recorded by automation per `AGENTS.md` instructions.
+
+- Updated `docker-compose.yml` to build both `jena` and `jena-fuseki` and clarified persistence:
+  - Added a `jena` service that builds from `./jena` (image contains the Jena CLI/jars). The service is intended for CLI use and does not require a persistent volume.
+  - Removed the unnecessary `jena-data` volume; `jena` is image-only and provides tools via `docker compose exec jena` or `docker compose run --rm jena`.
+  - Kept `fuseki` service and its `fuseki-data` volume; confirmed `docker compose up -d --build` brings both services up and that `fuseki` responds to `/$/ping`.
+
+-- Change recorded by automation per `AGENTS.md` instructions.

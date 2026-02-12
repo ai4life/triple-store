@@ -1,6 +1,15 @@
 version: "3.8"
 
 services:
+  jena:
+    build: ./jena
+    image: jena:local
+    container_name: jena
+    # Keep the container running so you can exec into it to run CLI tools
+    command: tail -f /dev/null
+    restart: unless-stopped
+    # No persistent volume needed: the image contains the Jena tools/jars
+
   fuseki:
     build: ./jena-fuseki
     image: jena-fuseki:local
@@ -11,6 +20,12 @@ services:
     restart: unless-stopped
     volumes:
       - fuseki-data:/fuseki
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3030/$/ping || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
 
 volumes:
   fuseki-data:
+  # jena does not require a named volume; it is an image containing CLI tools
