@@ -12,3 +12,9 @@
 - Security notes: `ADMIN_PASSWORD` is only injected when needed and is unset after use; avoid exposing secrets in build logs or image layers. Inputs used by the entrypoint are processed using `envsubst` and handled carefully.
 
 -- Change recorded by automation per `AGENTS.md` instructions.
+
+- Added `docker-compose.yml` at repository root to simplify local deployment:
+  - Builds the `jena-fuseki` service, maps host port `3030:3030`, creates a named `fuseki-data` volume, and includes a basic HTTP healthcheck.
+  - Verified via `docker compose up -d` that the service comes up and responds to `/$/ping`.
+
+-- Change recorded by automation per `AGENTS.md` instructions.
