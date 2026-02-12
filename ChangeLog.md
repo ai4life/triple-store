@@ -1,0 +1,14 @@
+## 2026-02-11
+
+- Converted `jena-fuseki/docker-entrypoint.sh` to Unix (LF) line endings to fix runtime errors seen when starting the container (repeated `set: illegal option -` and `: not found`). Corrected the readiness loop to use `until curl --output /dev/null --silent --head --fail http://localhost:3030; do`.
+
+- Updated `jena-fuseki/Dockerfile` to be robust against Windows CRLF checkouts:
+  - Strip CRLF from scripts after `COPY` (`sed -i 's/\r$//'`) so scripts run correctly inside Alpine/Linux images.
+  - Invoke the entrypoint using `bash` under `tini` to ensure the `#!/bin/bash` shebang is honored.
+  - Strip CRLF and set executable bits for `load.sh`, `tdbloader`, and `tdbloader2`.
+
+- Rebuilt and tested the image locally; Fuseki starts successfully and container logs include "Fuseki is available :-)".
+
+- Security notes: `ADMIN_PASSWORD` is only injected when needed and is unset after use; avoid exposing secrets in build logs or image layers. Inputs used by the entrypoint are processed using `envsubst` and handled carefully.
+
+-- Change recorded by automation per `AGENTS.md` instructions.

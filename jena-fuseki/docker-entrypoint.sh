@@ -57,7 +57,7 @@ fi
 
 # Wait until server is up
 echo "Waiting for Fuseki to finish starting up..."
-until $(curl --output /dev/null --silent --head --fail http://localhost:3030); do
+until curl --output /dev/null --silent --head --fail http://localhost:3030; do
   sleep 1s
 done
 

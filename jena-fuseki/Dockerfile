@@ -71,13 +71,14 @@ RUN  $FUSEKI_HOME/fuseki-server & \
 # (which we'll generate on start-up)
 COPY shiro.ini $FUSEKI_HOME/shiro.ini
 COPY docker-entrypoint.sh /
-RUN chmod 755 /docker-entrypoint.sh
+RUN sed -i 's/\r$//' /docker-entrypoint.sh && chmod 755 /docker-entrypoint.sh
 
 
 COPY load.sh $FUSEKI_HOME/
 COPY tdbloader $FUSEKI_HOME/
 COPY tdbloader2 $FUSEKI_HOME/
-RUN chmod 755 $FUSEKI_HOME/load.sh $FUSEKI_HOME/tdbloader $FUSEKI_HOME/tdbloader2
+RUN sed -i 's/\r$//' $FUSEKI_HOME/load.sh $FUSEKI_HOME/tdbloader $FUSEKI_HOME/tdbloader2 && \
+    chmod 755 $FUSEKI_HOME/load.sh $FUSEKI_HOME/tdbloader $FUSEKI_HOME/tdbloader2
 #VOLUME /staging
 
 # Create a fuseki user and group
@@ -97,6 +98,6 @@ VOLUME $FUSEKI_BASE
 EXPOSE 3030
 USER fuseki
 
-ENTRYPOINT ["/sbin/tini", "--", "sh", "/docker-entrypoint.sh"]
+ENTRYPOINT ["/sbin/tini", "--", "bash", "/docker-entrypoint.sh"]
 CMD ["/jena-fuseki/fuseki-server"]
 
