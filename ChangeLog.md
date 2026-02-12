@@ -8,8 +8,15 @@
   - Strip CRLF and set executable bits for `load.sh`, `tdbloader`, and `tdbloader2`.
 
 - Rebuilt and tested the image locally; Fuseki starts successfully and container logs include "Fuseki is available :-)".
+- Rebuilt and tested the image locally; Fuseki starts successfully and container logs include "Fuseki is available :-)".
 
 - Security notes: `ADMIN_PASSWORD` is only injected when needed and is unset after use; avoid exposing secrets in build logs or image layers. Inputs used by the entrypoint are processed using `envsubst` and handled carefully.
+
+-- Change recorded by automation per `AGENTS.md` instructions.
+
+- Make Fuseki respect Cloud Run's `PORT` environment variable:
+  - `docker-entrypoint.sh` now reads `PORT` (defaulting to 3030) and uses it for readiness checks and dataset creation.
+  - `Dockerfile` `CMD` updated to run `/jena-fuseki/fuseki-server --port ${PORT:-3030}` so the server listens on the injected port (e.g. 8080 on Cloud Run).
 
 -- Change recorded by automation per `AGENTS.md` instructions.
 

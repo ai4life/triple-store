@@ -95,9 +95,12 @@ RUN mkdir -p $FUSEKI_BASE; \
     chown -R fuseki:fuseki $FUSEKI_BASE
 VOLUME $FUSEKI_BASE
 
+# Expose the default Fuseki port (Container will use $PORT if provided at runtime)
 EXPOSE 3030
 USER fuseki
 
 ENTRYPOINT ["/sbin/tini", "--", "bash", "/docker-entrypoint.sh"]
-CMD ["/jena-fuseki/fuseki-server"]
+# Start Fuseki on the port provided by the environment variable `PORT` (Cloud Run sets this).
+# Use `bash -c` so variable expansion happens at container start time.
+CMD ["bash", "-c", "/jena-fuseki/fuseki-server --port ${PORT:-3030}"]
 

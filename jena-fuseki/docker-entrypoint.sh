@@ -55,9 +55,11 @@ else
   TDB_VERSION='tdb'
 fi
 
-# Wait until server is up
-echo "Waiting for Fuseki to finish starting up..."
-until curl --output /dev/null --silent --head --fail http://localhost:3030; do
+# Determine the port to use (Cloud Run provides $PORT). Default to 3030 for local compatibility.
+FUSEKI_PORT=${PORT:-3030}
+
+echo "Waiting for Fuseki to finish starting up on port ${FUSEKI_PORT}..."
+until curl --output /dev/null --silent --head --fail http://localhost:${FUSEKI_PORT}; do
   sleep 1s
 done
 
@@ -66,7 +68,7 @@ printenv | egrep "^FUSEKI_DATASET_" | while read env_var
 do
     dataset=$(echo $env_var | egrep -o "=.*$" | sed 's/^=//g')
     echo "Creating dataset $dataset"
-    curl -s 'http://localhost:3030/$/datasets'\
+    curl -s "http://localhost:${FUSEKI_PORT}/$/datasets"\
          -u admin:${ADMIN_PASSWORD}\
          -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8'\
          --data "dbName=${dataset}&dbType=${TDB_VERSION}"
